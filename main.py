@@ -5,11 +5,6 @@ from hid import keyboard as fake_keyboard
 from hid import mouse as fake_mouse
 from hid import write as hid_write
 
-# from hid.keycodes import azerty
-# from hid.keycodes import norwegian
-# from hid.keycodes import qwerty
-# from hid.keycodes import modifiers
-
 
 logger = logging.getLogger(__name__)
 # Location of file path at which to write keyboard HID input.
@@ -21,7 +16,7 @@ keyboard_layout = os.environ.get('KEYBOARD_LAYOUT', 'QWERTY')
 
 def key_stroke(hid_keycode, modifiers):
     try:
-        fake_keyboard.send_keystroke(keyboard_path, hid_keycode, modifiers)
+        fake_keyboard.send_keystroke(keyboard_path, modifiers, hid_keycode)
     except hid_write.WriteError as e:
         logger.error('Failed to write key: %s (keycode=%d). %s', hid_keycode,e)
         return {'success': False}
