@@ -17,7 +17,7 @@ _MODIFIER_KEYCODES = [
 
 def send_keystroke(keyboard_path, control_keys, hid_keycode):
     '''
-    Combines keycode and control (modifier) buffers into a single buffer and sends to the hardware 
+    Combines keycode and control (modifier) buffers into a single buffer and writes to hardware
     '''
     # First 8 bytes are for the first keystroke. Second 8 bytes are
     # all zeroes to indicate release of keys.
