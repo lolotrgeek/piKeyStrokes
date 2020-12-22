@@ -7,7 +7,7 @@ The `install/enable_hid.sh` script enables two HID devices:
 - `hid1` : is a mouse, which typically registers at `/dev/hidg1/`
 
 ```
-$ sudo ./install/setup.sh
+$ sudo ./setup.sh
 $ sudo reboot
 ```
 
