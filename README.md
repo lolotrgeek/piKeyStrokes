@@ -39,3 +39,7 @@ see `test.py` for how to build a `mouse_move_event`
 - consider vars not dict for mouse_event
 - make this a pypi package
 
+## Reference
+install script from [pi-as-keyboard](https://github.com/c4software/pi-as-keyboard)
+
+gadget init scrript from [init-gadget-script](https://github.com/mtlynch/tinypilot/blob/master/scripts/usb-gadget/init-usb-gadget)
