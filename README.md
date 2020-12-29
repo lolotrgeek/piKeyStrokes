@@ -11,6 +11,15 @@ $ sudo ./setup.sh
 $ sudo reboot
 ```
 
+## Uninstall
+The HID gadget has to be re-initialized on reboot (think of it like plugging the device in) with the service created in `setup.sh` and `enable_hid.service`.
+
+To uninstall simply disable the service and reboot. 
+```
+systemctl disable enable_hid.service
+sudo reboot
+```
+
 ## Usage
 See `main.py` for following functions: 
 
