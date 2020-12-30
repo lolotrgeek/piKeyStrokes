@@ -41,7 +41,21 @@ key_stroke(0x06, 0xe0)
 ### mouse_event(mouse_move_event)
 Move mouse, press buttons, roll scrollwheel
 > mouse_move_event - type : `dict`
+- buttons
+    - `0` - none
+    - `1` - left 
+    - `2` - right 
+    - `4` - middle
+- x
+    - `int` in range `[-127, 127]`
+- y
+    - `int` in range `[-127, 127]`
 
+- wheel 
+    - `-1`- down
+    - `0` - none
+    - `1` - up
+    
 see `test.py` for how to build a `mouse_move_event`
 
 ## TODO

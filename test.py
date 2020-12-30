@@ -5,10 +5,9 @@ main.key_release()
 
 movemouse = {
     "buttons": 0,
-    "relative_x" : 0.5,
-    "relative_y" : 0.5,
-    "vertical_wheel_delta": 0,
-    "horizontal_wheel_delta": 0,
+    "x" : 1, # move mouse 1 pixel to right
+    "y" : 1, # move mouse 1 pixel up
+    "wheel": 0,
 }
 
 main.mouse_event(movemouse)
