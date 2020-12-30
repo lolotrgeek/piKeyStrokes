@@ -12,8 +12,6 @@ $ sudo reboot
 ```
 
 ## Uninstall
-The HID gadget has to be re-initialized on reboot (think of it like plugging the device in) with the service created in `setup.sh` and `enable_hid.service`.
-
 To uninstall simply disable the service and reboot. 
 ```
 systemctl disable enable_hid.service
@@ -55,8 +53,12 @@ Move mouse, press buttons, roll scrollwheel
     - `-1`- down
     - `0` - none
     - `1` - up
-    
+
 see `test.py` for how to build a `mouse_move_event`
+
+## Notes
+
+Since the HID gadget will unmount on reboot the purpose of the service is to re-initialize the HID gadget on boot (think of it like plugging the device in) the service is created in `setup.sh` and `enable_hid.service`.
 
 ## TODO
 - consider vars not dict for mouse_event
