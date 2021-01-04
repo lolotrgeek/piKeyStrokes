@@ -1,5 +1,5 @@
 from hid import write as hid_write
-from . import send as hid_send
+from hid import send as hid_send
 
 KEYCODE_LEFT_CTRL = 0xe0
 KEYCODE_LEFT_SHIFT = 0xe1
@@ -16,41 +16,30 @@ _MODIFIER_KEYCODES = [
 ]
 
 
-def receive_keystroke(keyboard_path, control_keys, hid_keycode):
+def receive_keystroke(keyboard_path, buf):
     '''
     Combines keycode and control (modifier) buffers into a single buffer and writes to hardware
     '''
     # First 8 bytes are for the first keystroke. Second 8 bytes are
     # all zeroes to indicate release of keys.
-    buf = [0] * 8
-    buf[0] = control_keys
-    buf[2] = hid_keycode
+    control_keys = buf[0]
+    hid_keycode = buf[2] 
     hid_write.write_to_hid_interface(keyboard_path, buf)
 
     # If it's not a modifier keycode, add a message indicating that the key
     # should be released after it is sent.
     if hid_keycode not in _MODIFIER_KEYCODES:
-        receive_release_keys(keyboard_path)
+        release_keys(keyboard_path)
 
 
-def receive_release_keys(keyboard_path):
+def release_keys(keyboard_path):
     hid_write.write_to_hid_interface(keyboard_path, [0] * 8)
 
 def send_keystroke(server_address, control_keys, hid_keycode):
-    '''
-    Combines keycode and control (modifier) buffers into a single buffer and writes to hardware
-    '''
-    # First 8 bytes are for the first keystroke. Second 8 bytes are
-    # all zeroes to indicate release of keys.
     buf = [0] * 8
     buf[0] = control_keys
     buf[2] = hid_keycode
     hid_send.send(server_address, buf)
 
-    # If it's not a modifier keycode, add a message indicating that the key
-    # should be released after it is sent.
-    if hid_keycode not in _MODIFIER_KEYCODES:
-        release_keys(server_address)
-
-def release_keys(server_address):
+def send_release_keys(server_address):
     hid_send.send(server_address, [0] * 8)

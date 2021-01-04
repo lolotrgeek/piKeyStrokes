@@ -19,21 +19,18 @@ mouse_path = os.environ.get('MOUSE_PATH', '/dev/hidg1')
 keyboard_layout = os.environ.get('KEYBOARD_LAYOUT', 'QWERTY')
 
 
-def key_stroke(hid_keycode, modifiers):
+def key_stroke(key_event):
     try:
-        fake_keyboard.receive_keystroke(keyboard_path, modifiers, hid_keycode)
+        fake_keyboard.receive_keystroke(keyboard_path, key_event)
     except hid_write.WriteError as e:
-        logger.error('Failed to write key: %s (keycode=%d). %s', hid_keycode,e)
+        logger.error('Failed to write key: %s (keycode=%d). %s', key_event,e)
         return {'success': False}
     return {'success': True}
 
 
 def mouse_event(mouse_move_event):
     try:
-        fake_mouse.receive_mouse_event(mouse_path, mouse_move_event["buttons"],
-                                    mouse_move_event["x"],
-                                    mouse_move_event["y"],
-                                    mouse_move_event["wheel"],)
+        fake_mouse.receive_mouse_event(mouse_path, mouse_move_event)
     except hid_write.WriteError as e:
         logger.error('Failed to forward mouse event: %s', e)
         return {'success': False}
@@ -45,51 +42,41 @@ def key_release():
     except hid_write.WriteError as e:
         logger.error('Failed to release keys: %s', e)
 
-def main():
-    # Create a TCP/IP socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    print(sys.stderr, 'starting up on %s port %s' % server_address)
-    sock.bind(server_address)
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Listen for incoming connections
-    sock.listen(1)
-    # Wait for a connection
-    print(sys.stderr, 'waiting for a connection')
-    connection, client_address = sock.accept()
-    print(sys.stderr, 'connection from', client_address)
+print(sys.stderr, 'starting up on %s port %s' % server_address)
+sock.bind(server_address)
+
+# Listen for incoming connections
+sock.listen(1)
+# Wait for a connection
+print('waiting for a connection')
+connection, client_address = sock.accept()
+try:
+    print('connection from', client_address)
     # Receive the data in small chunks and retransmit it
     while True:
-        try:
             data = connection.recv(16)
-            print(sys.stderr, 'received "%s"' % data)
             if data:
                 size = sys.getsizeof(data)
-                if size == 41:
+                print(size)
+                if size == 25:
                     if data == bytearray([0] * 8):
-                        print('Release Keys')
+                        # print('Release Keys', data)
+                        key_release()
                     else: 
-                        print('Write Key')
+                        # print('Write Key', data)
+                        key_stroke(data)
                 else:
-                    print('Write Mouse')
+                    # print('Write Mouse', data)
+                    mouse_event(data)
                 
-                # print(sys.stderr, 'sending data back to the client')
+                # print('sending data back to the client')
                 connection.sendall(data)
             else:
-                print(sys.stderr, 'no more data from', client_address)
+                print('no more data from', client_address)
                 break
-        finally:
-            # Clean up the connection
-            connection.close()
-    
-if __name__ == '__main__':
-    try:
-        main()
-    except KeyboardInterrupt:
-        print('Interrupted')
-        try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
-
-
+finally:
+    connection.close()
