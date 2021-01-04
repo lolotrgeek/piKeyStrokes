@@ -24,7 +24,7 @@ def receive_keystroke(keyboard_path, buf):
     # all zeroes to indicate release of keys.
     control_keys = buf[0]
     hid_keycode = buf[2] 
-    hid_write.write_to_hid_interface(keyboard_path, buf)
+    hid_write._write_to_hid_interface_immediately(keyboard_path, buf)
 
     # If it's not a modifier keycode, add a message indicating that the key
     # should be released after it is sent.
@@ -33,7 +33,7 @@ def receive_keystroke(keyboard_path, buf):
 
 
 def release_keys(keyboard_path):
-    hid_write.write_to_hid_interface(keyboard_path, [0] * 8)
+    hid_write._write_to_hid_interface_immediately(keyboard_path, [0] * 8)
 
 def send_keystroke(server_address, control_keys, hid_keycode):
     buf = [0] * 8

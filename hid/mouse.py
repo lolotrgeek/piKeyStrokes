@@ -7,7 +7,7 @@ from hid import send as hid_send
 # https://wiki.osdev.org/Mouse_Input
 
 def receive_mouse_event(mouse_path, mouse_move_event):
-    hid_write._write_to_hid_interface(mouse_path, mouse_move_event)
+    hid_write._write_to_hid_interface_immediately(mouse_path, mouse_move_event)
 
 def send_mouse_event(server_address, button, dx, dy, wheel):
     report = [button, dx & 0xff, dy & 0xff, wheel & 0xff]

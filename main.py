@@ -38,7 +38,7 @@ def mouse_event(mouse_move_event):
 
 def key_release():
     try:
-        fake_keyboard.receive_release_keys(keyboard_path)
+        fake_keyboard.release_keys(keyboard_path)
     except hid_write.WriteError as e:
         logger.error('Failed to release keys: %s', e)
 
