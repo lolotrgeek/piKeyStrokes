@@ -1,5 +1,5 @@
-# PiKeyStrokes Library
-Enables HID emulation by enabling OTG on RPi4 or RPiZero/W.
+# PiKeyStrokes Library - Remote
+Enables HID emulation by enabling OTG on RPi4 or RPiZero/W. Remote variant accepts inputs over TCP socket and writes them to HID interface.
 
 ## Install
 The `install/enable_hid.sh` script enables two HID devices:
@@ -19,8 +19,13 @@ sudo reboot
 ```
 
 ## Usage
-See `main.py` for following functions: 
+Set `server_address` in `main.py`.
 
+```
+python main.py
+```
+
+## API
 ### Key_stroke(hid_keycode, modifiers)
 Press the given key with any modifiers
 
