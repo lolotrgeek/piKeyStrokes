@@ -9,7 +9,7 @@ from hid import mouse as fake_mouse
 from hid import write as hid_write
 
 # (IP, port)
-server_address = 'localhost'
+server_address = '192.168.1.248'
 server_port = 10000
 
 logger = logging.getLogger(__name__)
