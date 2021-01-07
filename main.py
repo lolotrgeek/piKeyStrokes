@@ -58,7 +58,7 @@ class ThreadedServer(object):
         while True:
             client, address = self.sock.accept()
             client.settimeout(60)
-            print('Connected.')
+            raise print('Connected.')
             threading.Thread(target = self.listenToClient,args = (client,address)).start()
 
     def listenToClient(self, client, address):
@@ -80,7 +80,7 @@ class ThreadedServer(object):
                     # send data back for verification
                     client.sendall(data)
                 else:
-                    print('Client disconnected')
+                    raise print('Client disconnected')
             except:
                 client.close()
                 return False
