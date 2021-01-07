@@ -1,6 +1,7 @@
 import logging
 import os
 import socket
+import threading
 import sys
 
 from hid import keyboard as fake_keyboard
@@ -8,7 +9,8 @@ from hid import mouse as fake_mouse
 from hid import write as hid_write
 
 # (IP, port)
-server_address = ('localhost', 10000)
+server_address = 'localhost'
+server_port = 10000
 
 logger = logging.getLogger(__name__)
 # Location of file path at which to write keyboard HID input.
@@ -42,41 +44,35 @@ def key_release():
     except hid_write.WriteError as e:
         logger.error('Failed to release keys: %s', e)
 
+class ThreadedServer(object):
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((self.host, self.port))
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def listen(self):
+        self.sock.listen(5)
+        while True:
+            client, address = self.sock.accept()
+            client.settimeout(60)
+            threading.Thread(target = self.listenToClient,args = (client,address)).start()
 
-print(sys.stderr, 'starting up on %s port %s' % server_address)
-sock.bind(server_address)
-
-# Listen for incoming connections
-sock.listen(1)
-# Wait for a connection
-print('waiting for a connection')
-connection, client_address = sock.accept()
-try:
-    print('connection from', client_address)
-    # Receive the data in small chunks and retransmit it
-    while True:
-            data = connection.recv(16)
-            if data:
-                size = sys.getsizeof(data)
-                print(size)
-                if size == 25:
-                    if data == bytearray([0] * 8):
-                        # print('Release Keys', data)
-                        key_release()
-                    else: 
-                        # print('Write Key', data)
-                        key_stroke(data)
+    def listenToClient(self, client, address):
+        size = 1024
+        while True:
+            try:
+                data = client.recv(size)
+                if data:
+                    # Set the response to echo back the recieved data 
+                    response = data
+                    client.send(response)
                 else:
-                    # print('Write Mouse', data)
-                    mouse_event(data)
-                
-                # print('sending data back to the client')
-                connection.sendall(data)
-            else:
-                print('no more data from', client_address)
-                break
-finally:
-    connection.close()
+                    raise print('Client disconnected')
+            except:
+                client.close()
+                return False
+
+if __name__ == "__main__":
+    ThreadedServer(server_address,server_port).listen()
