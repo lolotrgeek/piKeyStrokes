@@ -44,6 +44,46 @@ def key_release():
     except hid_write.WriteError as e:
         logger.error('Failed to release keys: %s', e)
 
+
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+print(sys.stderr, 'starting up on %s port %s' % server_address)
+sock.bind(server_address)
+
+# Listen for incoming connections
+sock.listen(1)
+# Wait for a connection
+print('waiting for a connection')
+connection, client_address = sock.accept()
+try:
+    print('connection from', client_address)
+    # Receive the data in small chunks and retransmit it
+    while True:
+            data = connection.recv(16)
+            if data:
+                size = sys.getsizeof(data)
+                print(size)
+                if size == 25:
+                    if data == bytearray([0] * 8):
+                        # print('Release Keys', data)
+                        key_release()
+                    else: 
+                        # print('Write Key', data)
+                        key_stroke(data)
+                else:
+                    # print('Write Mouse', data)
+                    mouse_event(data)
+                
+                # print('sending data back to the client')
+                connection.sendall(data)
+            else:
+                print('no more data from', client_address)
+                break
+finally:
+    connection.close()
+
+
 class ThreadedServer(object):
     def __init__(self, host, port):
         self.host = host
@@ -60,14 +100,22 @@ class ThreadedServer(object):
             threading.Thread(target = self.listenToClient,args = (client,address)).start()
 
     def listenToClient(self, client, address):
-        size = 1024
         while True:
             try:
-                data = client.recv(size)
+                data = client.recv(16)
                 if data:
-                    # Set the response to echo back the recieved data 
-                    response = data
-                    client.send(response)
+                    size = sys.getsizeof(data)
+                    if size == 25:
+                        if data == bytearray([0] * 8):
+                            # print('Release Keys', data)
+                            key_release()
+                        else: 
+                            # print('Write Key', data)
+                            key_stroke(data)
+                    else:
+                        # print('Write Mouse', data)
+                        mouse_event(data)
+                    
                 else:
                     raise print('Client disconnected')
             except:
@@ -75,4 +123,4 @@ class ThreadedServer(object):
                 return False
 
 if __name__ == "__main__":
-    ThreadedServer(server_address,server_port).listen()
+    ThreadedServer(server_address,server_port).listen()    
