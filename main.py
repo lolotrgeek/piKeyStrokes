@@ -54,9 +54,11 @@ class ThreadedServer(object):
 
     def listen(self):
         self.sock.listen(5)
+        print('Listening...')
         while True:
             client, address = self.sock.accept()
             client.settimeout(60)
+            print('Connected.')
             threading.Thread(target = self.listenToClient,args = (client,address)).start()
 
     def listenToClient(self, client, address):
@@ -77,7 +79,7 @@ class ThreadedServer(object):
                         mouse_event(data)
                     
                 else:
-                    raise print('Client disconnected')
+                    print('Client disconnected')
             except:
                 client.close()
                 return False
