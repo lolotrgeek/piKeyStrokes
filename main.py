@@ -77,7 +77,8 @@ class ThreadedServer(object):
                     else:
                         # print('Write Mouse', data)
                         mouse_event(data)
-                    
+                    # send data back for verification
+                    client.sendall(data)
                 else:
                     print('Client disconnected')
             except:
