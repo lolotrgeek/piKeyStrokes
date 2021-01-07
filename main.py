@@ -11,6 +11,7 @@ from hid import write as hid_write
 # (IP, port)
 server_address = '192.168.1.248'
 server_port = 10000
+timeout = 60
 
 logger = logging.getLogger(__name__)
 # Location of file path at which to write keyboard HID input.
@@ -44,10 +45,12 @@ def key_release():
     except hid_write.WriteError as e:
         logger.error('Failed to release keys: %s', e)
 
+# https://stackoverflow.com/a/23828265
 class ThreadedServer(object):
-    def __init__(self, host, port):
+    def __init__(self, host, port, timeout):
         self.host = host
         self.port = port
+        self.timeout = timeout
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
@@ -57,7 +60,7 @@ class ThreadedServer(object):
         print('Listening...')
         while True:
             client, address = self.sock.accept()
-            client.settimeout(60)
+            client.settimeout(self.timeout)
             print('Connected.')
             threading.Thread(target = self.listenToClient,args = (client,address)).start()
 
@@ -79,10 +82,11 @@ class ThreadedServer(object):
                         mouse_event(data)
                     # send data back for verification
                     client.sendall(data)
+                else:
+                    raise print('Client disconnected')
             except:
-                raise print('Client disconnected')
                 client.close()
                 return False
 
 if __name__ == "__main__":
-    ThreadedServer(server_address,server_port).listen()    
+    ThreadedServer(server_address,server_port, timeout).listen()    
