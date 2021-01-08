@@ -16,7 +16,7 @@ _MODIFIER_KEYCODES = [
 ]
 
 
-def receive_keystroke(keyboard_path, buf):
+def write_keystroke(keyboard_path, buf):
     '''
     Combines keycode and control (modifier) buffers into a single buffer and writes to hardware
     '''

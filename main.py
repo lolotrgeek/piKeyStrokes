@@ -4,8 +4,8 @@ import socket
 import threading
 import sys
 
-from hid import keyboard as fake_keyboard
-from hid import mouse as fake_mouse
+from hid import keyboard
+from hid import mouse
 from hid import write as hid_write
 
 # (IP, port)
@@ -24,7 +24,7 @@ keyboard_layout = os.environ.get('KEYBOARD_LAYOUT', 'QWERTY')
 
 def key_stroke(key_event):
     try:
-        fake_keyboard.receive_keystroke(keyboard_path, key_event)
+        keyboard.write_keystroke(keyboard_path, key_event)
     except hid_write.WriteError as e:
         logger.error('Failed to write key: %s (keycode=%d). %s', key_event,e)
         return {'success': False}
@@ -33,7 +33,7 @@ def key_stroke(key_event):
 
 def mouse_event(mouse_move_event):
     try:
-        fake_mouse.receive_mouse_event(mouse_path, mouse_move_event)
+        mouse.write_mouse_event(mouse_path, mouse_move_event)
     except hid_write.WriteError as e:
         logger.error('Failed to forward mouse event: %s', e)
         return {'success': False}
@@ -41,7 +41,7 @@ def mouse_event(mouse_move_event):
 
 def key_release():
     try:
-        fake_keyboard.release_keys(keyboard_path)
+        keyboard.release_keys(keyboard_path)
     except hid_write.WriteError as e:
         logger.error('Failed to release keys: %s', e)
 

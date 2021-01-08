@@ -6,7 +6,7 @@ from hid import send as hid_send
 # https://www.raspberrypi.org/forums/viewtopic.php?t=234495
 # https://wiki.osdev.org/Mouse_Input
 
-def receive_mouse_event(mouse_path, event):
+def write_mouse_event(mouse_path, event):
     report = event
     if isinstance(event[1], float):
         x, y = scale_mouse_coordinates(event[1], event[2])
