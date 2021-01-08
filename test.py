@@ -1,5 +1,6 @@
 import main
 
+#TODO: remote test
 main.key_stroke(0x0, 0x0)
 main.key_release()
 
