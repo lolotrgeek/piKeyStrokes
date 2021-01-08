@@ -7,9 +7,7 @@ from hid import send as hid_send
 # https://wiki.osdev.org/Mouse_Input
 
 def receive_mouse_event(mouse_path, event):
-    print(type(event), event)
     report = event
-    print(report[1], report[2])
     if isinstance(event[1], float):
         x, y = scale_mouse_coordinates(event[1], event[2])
         report[1] = x
