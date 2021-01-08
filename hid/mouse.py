@@ -6,9 +6,21 @@ from hid import send as hid_send
 # https://www.raspberrypi.org/forums/viewtopic.php?t=234495
 # https://wiki.osdev.org/Mouse_Input
 
-def receive_mouse_event(mouse_path, mouse_move_event):
-    hid_write._write_to_hid_interface_immediately(mouse_path, mouse_move_event)
+def receive_mouse_event(mouse_path, event):
+    report = event
+    if isinstance(event[1], float):
+        x, y = scale_mouse_coordinates(event[1], event[2])
+        report[1] = x
+        report[2] = y        
+    hid_write._write_to_hid_interface_immediately(mouse_path, report)
 
 def send_mouse_event(server_address, button, dx, dy, wheel):
-    report = [button, dx & 0xff, dy & 0xff, wheel & 0xff]
-    hid_send.send(server_address, report)    
+    event = [button, dx & 0xff, dy & 0xff, wheel & 0xff]
+    hid_send.send(server_address, event)    
+
+def scale_mouse_coordinates(relative_x, relative_y):
+    # This comes from LOGICAL_MAXIMUM in the mouse HID descriptor.
+    max_hid_value = 127.0
+    x = int(relative_x * max_hid_value)
+    y = int(relative_y * max_hid_value)
+    return x, y
