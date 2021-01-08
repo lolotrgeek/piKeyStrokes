@@ -7,7 +7,9 @@ from hid import send as hid_send
 # https://wiki.osdev.org/Mouse_Input
 
 def receive_mouse_event(mouse_path, event):
-    report = event
+    # report needs 0xFF to preserve signed bits
+    report = [event[0], event[1] & 0xff, event[2] & 0xff, event[3] & 0xff]
+    # handle relative x,y inputs
     if isinstance(event[1], float):
         x, y = scale_mouse_coordinates(event[1], event[2])
         report[1] = x
@@ -15,7 +17,7 @@ def receive_mouse_event(mouse_path, event):
     hid_write._write_to_hid_interface_immediately(mouse_path, report)
 
 def send_mouse_event(server_address, button, dx, dy, wheel):
-    event = [button, dx & 0xff, dy & 0xff, wheel & 0xff]
+    event = [button, dx, dy, wheel]
     hid_send.send(server_address, event)    
 
 def scale_mouse_coordinates(relative_x, relative_y):
