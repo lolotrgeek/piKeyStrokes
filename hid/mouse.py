@@ -8,9 +8,8 @@ from hid import send as hid_send
 
 def receive_mouse_event(mouse_path, event):
     print(type(event), event)
-    # report needs 0xFF to preserve signed bits
-    report = [event[0], event[1] & 0xff, event[2] & 0xff, event[3] & 0xff]
-    # handle relative x,y inputs
+    report = event
+    print(report[1], report[2])
     if isinstance(event[1], float):
         x, y = scale_mouse_coordinates(event[1], event[2])
         report[1] = x
