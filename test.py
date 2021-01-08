@@ -1,14 +1,11 @@
-import main
+from hid import mouse 
+from hid import keyboard
+from main import ThreadedServer
+from main import server_address
 
-#TODO: remote test
-main.key_stroke(0x0, 0x0)
-main.key_release()
+ThreadedServer.listen()
 
-movemouse = {
-    "buttons": 0,
-    "x" : 1, # move mouse 1 pixel to right
-    "y" : 1, # move mouse 1 pixel up
-    "wheel": 0,
-}
+keyboard.send_keystroke(server_address, 0x0, 0x0)
+keyboard.send_release_keys(server_address)
 
-main.mouse_event(movemouse)
+mouse.send_mouse_event(server_address, 0, 0 & 0xff, 0 & 0xff, 0 & 0xff)
