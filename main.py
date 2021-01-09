@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 keyboard_path = os.environ.get('KEYBOARD_PATH', '/dev/hidg0')
 # Location of file path at which to write mouse HID input.
 mouse_path = os.environ.get('MOUSE_PATH', '/dev/hidg1')
+# Location of file path at which to write mouse HID input.
+mouse_2_path = os.environ.get('MOUSE_PATH', '/dev/hidg2')
 # Keyboard layout on target computer.
 keyboard_layout = os.environ.get('KEYBOARD_LAYOUT', 'QWERTY')
 
@@ -33,7 +35,11 @@ def key_stroke(key_event):
 
 def mouse_event(mouse_move_event):
     try:
-        mouse.write_mouse_event(mouse_path, mouse_move_event)
+        if len(mouse_move_event) == 6 :
+            path = mouse_path
+        else:
+            path = mouse_2_path
+        mouse.write_mouse_event(path, mouse_move_event)
     except hid_write.WriteError as e:
         logger.error('Failed to forward mouse event: %s', e)
         return {'success': False}
