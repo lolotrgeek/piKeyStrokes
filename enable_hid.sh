@@ -110,6 +110,47 @@ echo -ne \\x81\\x06 >> "$D"      #   INPUT (Data,Var,Rel)
 echo -ne \\xC0 >> "$D"           # END_COLLECTION
 cp "$D" "${MOUSE_FUNCTIONS_DIR}/report_desc"
 
+# Mouse 2
+MOUSE_2_FUNCTIONS_DIR="functions/hid.MOUSE_2"
+mkdir -p "$MOUSE_2_FUNCTIONS_DIR"
+echo 0 > "${MOUSE_2_FUNCTIONS_DIR}/protocol"
+echo 0 > "${MOUSE_2_FUNCTIONS_DIR}/subclass"
+echo 4 > "${MOUSE_2_FUNCTIONS_DIR}/report_length"
+# Write the report descriptor
+# based on https://eleccelerator.com/tutorial-about-usb-hid-report-descriptors
+D=$(mktemp)
+echo -ne \\x05\\x01 >> "$D"      # USAGE_PAGE (Generic Desktop)
+echo -ne \\x09\\x02 >> "$D"      # USAGE (Mouse)
+echo -ne \\xA1\\x01 >> "$D"      # COLLECTION (Application)
+echo -ne \\x05\\x09 >> "$D"      #    USAGE_PAGE (Button)
+echo -ne \\x19\\x01 >> "$D"      #    USAGE_MINIMUM (Button 1)
+echo -ne \\x29\\x03 >> "$D"      #    USAGE_MAXIMUM (Button 3)
+echo -ne \\x15\\x00 >> "$D"      #    LOGICAL_MINIMUM (0)
+echo -ne \\x25\\x01 >> "$D"      #    LOGICAL_MAXIMUM (1)
+echo -ne \\x95\\x03 >> "$D"      #    REPORT_COUNT (3)
+echo -ne \\x75\\x01 >> "$D"      #    REPORT_SIZE (1)
+echo -ne \\x81\\x02 >> "$D"      #    INPUT (Data,Var,Abs)
+echo -ne \\x95\\x01 >> "$D"      #    REPORT_COUNT (1)
+echo -ne \\x75\\x05 >> "$D"      #    REPORT_SIZE (5)
+echo -ne \\x81\\x03 >> "$D"      #    INPUT (Data,Var,Abs)
+echo -ne \\x05\\x01 >> "$D"      #    USAGE_PAGE (Generic Desktop)
+echo -ne \\x09\\x30 >> "$D"      #    USAGE (X)
+echo -ne \\x09\\x31 >> "$D"      #    USAGE (Y)
+echo -ne \\x15\\x81 >> "$D"      #    LOGICAL_MINIMUM (-127)
+echo -ne \\x25\\x7F >> "$D"      #    LOGICAL_MAXIMUM (127)
+echo -ne \\x75\\x08 >> "$D"      #    REPORT_SIZE (8)
+echo -ne \\x95\\x02 >> "$D"      #    REPORT_COUNT (2)
+echo -ne \\x81\\x06 >> "$D"      #    INPUT (Data,Var,Abs)
+echo -ne \\x09\\x38 >> "$D"      #    USAGE (wheel)
+echo -ne \\x15\\x81 >> "$D"      #    LOGICAL_MINIMUM (-127)
+echo -ne \\x25\\x7F >> "$D"      #    LOGICAL_MAXIMUM (127)
+echo -ne \\x75\\x08 >> "$D"      #    REPORT_SIZE (8)
+echo -ne \\x95\\x01 >> "$D"      #    REPORT_COUNT (1)
+echo -ne \\x81\\x06 >> "$D"      #    INPUT (Data,Var,Rel)
+echo -ne \\xC0 >> "$D"           #  END_COLLECTION
+cp "$D" "${MOUSE_2_FUNCTIONS_DIR}/report_desc"
+
+
 CONFIG_INDEX=1
 CONFIGS_DIR="configs/c.${CONFIG_INDEX}"
 mkdir -p "$CONFIGS_DIR"
@@ -121,7 +162,9 @@ echo "Config ${CONFIG_INDEX}: ECM network" > "${CONFIGS_STRINGS_DIR}/configurati
 
 ln -s "$KEYBOARD_FUNCTIONS_DIR" "${CONFIGS_DIR}/"
 ln -s "$MOUSE_FUNCTIONS_DIR" "${CONFIGS_DIR}/"
+ln -s "$MOUSE_2_FUNCTIONS_DIR" "${CONFIGS_DIR}/"
 ls /sys/class/udc > UDC
 
 chmod 777 /dev/hidg0
 chmod 777 /dev/hidg1
+chmod 777 /dev/hidg2
