@@ -8,19 +8,14 @@ from hid import keyboard
 from hid import mouse
 from hid import write as hid_write
 
-# (IP, port)
 server_address = '192.168.1.248'
 server_port = 10000
 timeout = 60
 
 logger = logging.getLogger(__name__)
-# Location of file path at which to write keyboard HID input.
 keyboard_path = os.environ.get('KEYBOARD_PATH', '/dev/hidg0')
-# Location of file path at which to write mouse HID input.
 mouse_path = os.environ.get('MOUSE_PATH', '/dev/hidg1')
-# Location of file path at which to write mouse HID input.
 mouse_2_path = os.environ.get('MOUSE_PATH', '/dev/hidg2')
-# Keyboard layout on target computer.
 keyboard_layout = os.environ.get('KEYBOARD_LAYOUT', 'QWERTY')
 
 
@@ -33,13 +28,12 @@ def key_stroke(key_event):
     return {'success': True}
 
 
-def mouse_event(mouse_move_event):
+def mouse_handler(mouse_event):
     try:
-        if len(mouse_move_event) == 6 :
-            path = mouse_path
+        if len(mouse_event) == 6 :
+            mouse.write_mouse_event(mouse_path, mouse_event)
         else:
-            path = mouse_2_path
-        mouse.write_mouse_event(path, mouse_move_event)
+            mouse.write_mouse_event_relative(mouse_2_path, mouse_event)
     except hid_write.WriteError as e:
         logger.error('Failed to forward mouse event: %s', e)
         return {'success': False}
@@ -85,7 +79,7 @@ class ThreadedServer(object):
                             key_stroke(data)
                     else:
                         # print('Write Mouse', data)
-                        mouse_event(data)
+                        mouse_handler(data)
                     # send data back for verification
                     client.sendall(data)
                 else:
