@@ -50,4 +50,4 @@ def write_mouse_event(mouse_path, event):
     rel[3] = event[3] & 0xff
     rel[4] = event[4] & 0xff
     rel[5] = event[5] & 0xff
-    hid_write._write_to_hid_interface_immediately(mouse_path, event)
+    hid_write._write_to_hid_interface_immediately(mouse_path, rel)
