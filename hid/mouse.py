@@ -29,6 +29,7 @@ def write_mouse_event_relative(mouse_path, event):
     NOTE: requires 2-byte `x , y` inputs, see `enable_hid.sh` `Mouse 2`
     '''
     x , y , height, width = event[1], event[2], event[4], event[5]   
+    print(x, y, height, width)
 
     relative_x = set_relative(x, width)
     relative_y = set_relative(y, height)
