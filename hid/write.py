@@ -13,7 +13,6 @@ class WriteError(Error):
 
 
 def _write_to_hid_interface_immediately(hid_path, buffer):
-    print(buffer)
     try:
         with open(hid_path, 'wb+') as hid_handle:
             hid_handle.write(bytearray(buffer))
