@@ -31,10 +31,10 @@ def key_stroke(key_event):
 def mouse_handler(mouse_event):
     try:
         if len(mouse_event) == 4 :
-            print('Absolute', mouse_event)
+            print('Absolute', mouse_event[0], mouse_event[1], mouse_event[2], mouse_event[3])
             mouse.write_mouse_event(mouse_path, mouse_event)
         elif len(mouse_event) == 6 :
-            print('Relative:', mouse_event)
+            print('Relative:', mouse_event[0], mouse_event[1], mouse_event[2], mouse_event[3], mouse_event[4], mouse_event[5])
             mouse.write_mouse_event(mouse_2_path, mouse_event)
         else:
             pass

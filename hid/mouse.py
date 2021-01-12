@@ -43,5 +43,11 @@ def scale_mouse_coordinates(relative_x, relative_y):
     return x, y    
 
 def write_mouse_event(mouse_path, event):
-    report = event 
-    hid_write._write_to_hid_interface_immediately(mouse_path, report)
+    rel = [0] * 6
+    rel[0] = event[0]
+    rel[1] = event[1] & 0xff
+    rel[2] = event[2] & 0xff
+    rel[3] = event[3] & 0xff
+    rel[4] = event[4] & 0xff
+    rel[5] = event[5] & 0xff
+    hid_write._write_to_hid_interface_immediately(mouse_path, event)
