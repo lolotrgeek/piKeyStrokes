@@ -31,8 +31,10 @@ def key_stroke(key_event):
 def mouse_handler(mouse_event):
     try:
         if len(mouse_event) == 6 :
+            print('Absolute Mouse')
             mouse.write_mouse_event(mouse_path, mouse_event)
         else:
+            print('Relative Mouse')
             mouse.write_mouse_event_relative(mouse_2_path, mouse_event)
     except hid_write.WriteError as e:
         logger.error('Failed to forward mouse event: %s', e)

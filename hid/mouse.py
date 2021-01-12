@@ -10,12 +10,12 @@ def send_mouse_event(server_address, button, dx, dy, wheel):
     event = [button, dx, dy, wheel]
     hid_send.send(server_address, event) 
 
-def send_mouse_event_relative(server_address, button, dx, dy, wheel, height, width):
-    report = [button, dx, dy, wheel, height, width] 
+def send_mouse_event_relative(server_address, button, x, y, wheel, height, width):
+    report = [button, x & 0xff, y & 0xff, wheel & 0xff, height & 0xff, width & 0xff]
     hid_send.send(server_address, report)
     
 def write_mouse_event(mouse_path, event):
-    report = event  
+    report = event 
     hid_write._write_to_hid_interface_immediately(mouse_path, report)
 
 def write_mouse_event_relative(mouse_path, event):
