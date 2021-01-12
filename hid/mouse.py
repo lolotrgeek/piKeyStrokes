@@ -31,16 +31,6 @@ def send_mouse_event_relative(server_address, button, x, y, wheel, height, width
     report[4] = (scale_y >> 8) & 0xff
     report[5] = wheel & 0xff    
     hid_send.send(server_address, report)
-    
-def write_mouse_event(mouse_path, event):
-    report = event 
-    hid_write._write_to_hid_interface_immediately(mouse_path, report)
-
-def write_mouse_event_relative(mouse_path, event):
-
-    report = event
-
-    hid_write._write_to_hid_interface_immediately(mouse_path, report)
 
 def relative_pos(pos, total):
     return min(1.0, max(0.0, pos / total))
@@ -50,4 +40,8 @@ def scale_mouse_coordinates(relative_x, relative_y):
     max_hid_value = 32767.0
     x = int(relative_x * max_hid_value)
     y = int(relative_y * max_hid_value)
-    return x, y
+    return x, y    
+
+def write_mouse_event(mouse_path, event):
+    report = event 
+    hid_write._write_to_hid_interface_immediately(mouse_path, report)
